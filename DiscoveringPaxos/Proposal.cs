@@ -8,27 +8,46 @@ namespace DiscoveringPaxos
 {
     public class Proposal
     {
-        public Proposal(string proposerName, int id, string value)
+        public Proposal(string proposerName, int id)
         {
-            this.ProposerName = ProposerName;
+            this.ProposerName = proposerName;
             this.Id = id;
-            this.Value = value;
         }
 
         public string ProposerName { get; private set; }
 
         public int Id { get; private set; }
 
-        public string Value { get; private set; }
-       
-        public static bool LessThan(Proposal p1, Proposal p2)
+        public bool GreaterThan(Proposal p2)
         {
-            if (p1.Id != p2.Id)
+            if (Id != p2.Id)
             {
-                return p1.Id < p2.Id;
+                return Id > p2.Id;
             }
 
-            return p1.ProposerName.CompareTo(p2.ProposerName) < 0;
+            return ProposerName.CompareTo(p2.ProposerName) > 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            
+            if (!(obj is Proposal))
+            {
+                return false;
+            }
+
+            var other = (Proposal)obj;
+
+            return Id == other.Id && ProposerName == other.ProposerName;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

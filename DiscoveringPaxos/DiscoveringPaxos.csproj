@@ -175,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\Request\AcceptorInitEvent.cs" />
+    <Compile Include="Events\Request\AcceptRequest.cs" />
     <Compile Include="Events\Request\ConflictingValuesLearnedEvent.cs" />
     <Compile Include="Events\Request\LearnerInitEvent.cs" />
     <Compile Include="Events\Request\MainMachineInitEvent.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="Events\Request\ProposalRequest.cs" />
     <Compile Include="Events\Request\ValueAcceptedEvent.cs" />
     <Compile Include="Events\Request\ValueLearnedEvent.cs" />
+    <Compile Include="Events\Response\ProposalResponse.cs" />
     <Compile Include="Machines\Acceptor.cs" />
     <Compile Include="Machines\Learner.cs" />
     <Compile Include="Machines\MainMachine.cs" />
@@ -201,8 +203,6 @@
     <None Include="PSharpBatch.config" />
     <None Include="PSharpBatchAuth.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Events\Response\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

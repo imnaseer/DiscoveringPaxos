@@ -13,7 +13,10 @@ namespace DiscoveringPaxos.Machines
         private string name;
         private List<MachineId> acceptors;
         private string value;
+
         private int proposalCounter = 0;
+        private Proposal currentProposal = null;
+        private HashSet<MachineId> receivedProposalResponses = null;
 
         public void InitOnEntry()
         {
@@ -30,9 +33,34 @@ namespace DiscoveringPaxos.Machines
             var request = (ClientProposeValueRequest)ReceivedEvent;
 
             this.value = request.Value;
+            this.proposalCounter++;
+            this.receivedProposalResponses = new HashSet<MachineId>();
+            this.currentProposal = new Proposal(this.name, proposalCounter);
             foreach (var acceptor in acceptors)
             {
-                Send(acceptor, new ProposalRequest(this.Id, new Proposal(this.name, proposalCounter++, value)));
+                Send(acceptor, new ProposalRequest(this.Id, currentProposal));
+            }
+
+            Goto<WaitingForAcks>();
+        }
+
+        public void ProposalResponseHandler()
+        {
+            var response = (ProposalResponse)ReceivedEvent;
+
+            if (!response.Acknowledged)
+            {
+                return;
+            }
+
+            receivedProposalResponses.Add(response.From);
+
+            if (receivedProposalResponses.Count == acceptors.Count)
+            {
+                foreach (var acceptor in acceptors)
+                {
+                    Send(acceptor, new AcceptRequest(this.Id, this.currentProposal, this.value));
+                }
             }
         }
 
@@ -44,6 +72,11 @@ namespace DiscoveringPaxos.Machines
 
         [OnEventDoAction(typeof(ClientProposeValueRequest), nameof(ProposeValueRequestHandler))]
         internal class Ready : MachineState
+        {
+        }
+
+        [OnEventDoAction(typeof(ProposalResponse), nameof(ProposalResponseHandler))]
+        internal class WaitingForAcks : MachineState
         {
         }
     }
