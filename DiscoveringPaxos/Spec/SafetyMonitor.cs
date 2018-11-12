@@ -17,6 +17,7 @@ namespace DiscoveringPaxos.Spec
         {
         }
 
+        [OnEventGotoState(typeof(ValueLearnedEvent), typeof(ValueLearned))]
         internal class ValueLearned : MonitorState
         {
         }

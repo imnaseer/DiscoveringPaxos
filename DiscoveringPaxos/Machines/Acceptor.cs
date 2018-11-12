@@ -16,6 +16,8 @@ namespace DiscoveringPaxos.Machines
         private List<MachineId> proposers;
         private List<MachineId> learners;
 
+        private Proposal lastAckedProposal;
+
         private Proposal lastAcceptedProposal;
         private string acceptedValue;
 
@@ -35,12 +37,16 @@ namespace DiscoveringPaxos.Machines
             var proposer = proposalRequest.From;
             var proposal = proposalRequest.Proposal;
 
-            if (this.acceptedValue == null && 
-                (lastAcceptedProposal == null ||
-                 proposal.GreaterThan(lastAcceptedProposal)))
+            if ((lastAckedProposal == null ||
+                 proposal.GreaterThan(lastAckedProposal)))
             {
-                lastAcceptedProposal = proposal;
-                Send(proposer, new ProposalResponse(this.Id, proposal, acknowledged: true));
+                lastAckedProposal = proposal;
+                Send(proposer, new ProposalResponse(
+                    this.Id, 
+                    proposal, 
+                    true /* acknowledged */,
+                    this.lastAcceptedProposal,
+                    this.acceptedValue));
             }
         }
 
@@ -50,24 +56,37 @@ namespace DiscoveringPaxos.Machines
             var proposal = acceptRequest.Proposal;
             var value = acceptRequest.Value;
 
-            if (lastAcceptedProposal == null ||
-                !lastAcceptedProposal.Equals(proposal))
+            if (lastAckedProposal == null ||
+                !lastAckedProposal.Equals(proposal))
             {
                 return;
             }
 
+            //if (this.lastAcceptedProposal != null && 
+            //    !this.lastAcceptedProposal.Equals(proposal))
+            //{
+            //    Assert(this.acceptedValue == value);
+            //}
+
+            this.lastAcceptedProposal = proposal;
             this.acceptedValue = value;
 
             foreach (var learner in learners)
             {
-                Send(learner, new ValueAcceptedEvent(this.Id, value));
+                Send(learner, new ValueAcceptedEvent(this.Id, proposal, value));
             }
+        }
+
+        public void HaltAcceptorEventHandler()
+        {
+            Raise(new Halt());
         }
 
         [Start]
         [OnEntry(nameof(InitOnEntry))]
         [OnEventDoAction(typeof(ProposalRequest), nameof(ProposalRequestHandler))]
         [OnEventDoAction(typeof(AcceptRequest), nameof(AcceptRequestHandler))]
+        [OnEventDoAction(typeof(HaltAcceptorEvent), nameof(HaltAcceptorEventHandler))]
         internal class Init : MachineState
         {
         }

@@ -14,8 +14,10 @@ namespace DiscoveringPaxos.Machines
         private string name;
         private List<MachineId> acceptors;
 
-        private Dictionary<MachineId, string> acceptorToValueMap = 
-            new Dictionary<MachineId, string>();
+        private Dictionary<MachineId, Proposal> acceptorToProposalMap = new Dictionary<MachineId, Proposal>();
+        private Dictionary<Proposal, string> proposalToValueMap = new Dictionary<Proposal, string>();
+
+        private string learnedValue = null;
 
         public void InitOnEntry()
         {
@@ -30,31 +32,36 @@ namespace DiscoveringPaxos.Machines
             var acceptedEvent = (ValueAcceptedEvent)ReceivedEvent;
 
             var acceptor = acceptedEvent.Acceptor;
-            var acceptedValue = acceptedEvent.Value;
+            var acceptedProposal = acceptedEvent.Proposal;
+            var value = acceptedEvent.Value;
 
-            acceptorToValueMap[acceptor] = acceptedValue;
+            acceptorToProposalMap[acceptor] = acceptedProposal;
+            proposalToValueMap[acceptedProposal] = value;
 
-            if (acceptorToValueMap.Count == acceptors.Count)
+            var proposalGroups = acceptorToProposalMap.Values.GroupBy(p => p);
+            var majorityProposalList = proposalGroups.OrderByDescending(g => g.Count()).First();
+
+            if (Utils.GreaterThan50PercentObservations(majorityProposalList.Count(), acceptors.Count))
             {
-                bool? allSame = null;
-                string lastValue = null;
-                foreach (var value in acceptorToValueMap.Values)
+                var majorityProposal = majorityProposalList.First();
+                var majorityValue = this.proposalToValueMap[majorityProposal];
+
+                if (this.learnedValue == null)
                 {
-                    if (allSame == null)
+                    this.learnedValue = majorityValue;
+                    Monitor<SafetyMonitor>(new ValueLearnedEvent());
+                }
+                else
+                {
+                    if (this.learnedValue == majorityValue)
                     {
-                        lastValue = value;
-                        allSame = true;
+                        Monitor<SafetyMonitor>(new ValueLearnedEvent());
                     }
-                    else if (lastValue != value)
+                    else
                     {
-                        allSame = false;
-                        break;
+                        Monitor<SafetyMonitor>(new ConflictingValuesLearnedEvent());
                     }
                 }
-
-                Monitor<SafetyMonitor>(allSame == true || allSame == null ?
-                    (Event)new ValueLearnedEvent() :
-                    (Event)new ConflictingValuesLearnedEvent());
             }
         }
 

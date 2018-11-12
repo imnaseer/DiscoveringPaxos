@@ -11,8 +11,9 @@ namespace DiscoveringPaxos.Machines
     public class MainMachine : Machine
     {
         private static int numProposers = 2;
-        private static int numAcceptors = 2;
+        private static int numAcceptors = 5;
         private static int numLearners = 1;
+        private static int maxAcceptorFailureCount = 2;
 
         private static Dictionary<string, MachineId> proposerNameToMachineId;
         private static Dictionary<string, MachineId> acceptorNameToMachineId;
@@ -77,6 +78,16 @@ namespace DiscoveringPaxos.Machines
                 var proposerName = GetProposerName(i);
                 var value = GetValue(i);
                 runtime.SendEvent(proposerNameToMachineId[proposerName], new ClientProposeValueRequest(null, value));
+            }
+
+            int failureCount = 0;
+            for (int i = 0; i < numAcceptors; i++)
+            {
+                if (Random() && failureCount < maxAcceptorFailureCount)
+                {
+                    failureCount++;
+                    Send(acceptorNameToMachineId[GetAcceptorName(i)], new HaltAcceptorEvent());
+                }
             }
         }
 

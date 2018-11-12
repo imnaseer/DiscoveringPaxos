@@ -177,8 +177,10 @@
     <Compile Include="Events\Request\AcceptorInitEvent.cs" />
     <Compile Include="Events\Request\AcceptRequest.cs" />
     <Compile Include="Events\Request\ConflictingValuesLearnedEvent.cs" />
+    <Compile Include="Events\Request\HaltAcceptorEvent.cs" />
     <Compile Include="Events\Request\LearnerInitEvent.cs" />
     <Compile Include="Events\Request\MainMachineInitEvent.cs" />
+    <Compile Include="Events\Request\NetworkSendRequest.cs" />
     <Compile Include="Events\Request\ProposerInitEvent.cs" />
     <Compile Include="Events\Request\ClientProposeValueRequest.cs" />
     <Compile Include="Events\Request\ProposalRequest.cs" />
@@ -193,9 +195,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proposal.cs" />
-    <Compile Include="Spec\LivenessMonitor.cs" />
     <Compile Include="Spec\SafetyMonitor.cs" />
     <Compile Include="SystemConfig.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

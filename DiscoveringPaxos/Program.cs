@@ -18,18 +18,6 @@ namespace DiscoveringPaxos
         {
             runtime.RegisterMonitor(typeof(SafetyMonitor));
             runtime.CreateMachine(typeof(MainMachine), new MainMachineInitEvent(runtime));
-
-            //var config = Configuration.Create().WithDebuggingEnabled(true);
-            //config.SchedulingIterations = 100;
-            //config.MaxSchedulingSteps = 1000;
-
-            //var report = TestingEngineFactory.CreateBugFindingEngine(config, (runtime) =>
-            //{
-            //    runtime.RegisterMonitor(typeof(SafetyMonitor));
-            //    runtime.CreateMachine(typeof(MainMachine), new MainMachineInitEvent(runtime));
-            //}).Run().TestReport;
-
-            //Console.WriteLine(report.NumOfFoundBugs);
         }
     }
 }
