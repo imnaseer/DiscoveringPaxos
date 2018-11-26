@@ -10,7 +10,7 @@ namespace DiscoveringPaxos.Machines
 {
     public class MainMachine : Machine
     {
-        private static int numProposers = 2;
+        private static int numProposers = 3;
         private static int numAcceptors = 5;
         private static int numLearners = 1;
         private static int maxAcceptorFailureCount = 2;
@@ -23,6 +23,8 @@ namespace DiscoveringPaxos.Machines
         {
             var initEvent = (MainMachineInitEvent)ReceivedEvent;
             var runtime = initEvent.Runtime;
+
+            var networkMachine = runtime.CreateMachine(typeof(NetworkMachine));
 
             proposerNameToMachineId = CreateMachineIds(
                 runtime,
@@ -49,7 +51,8 @@ namespace DiscoveringPaxos.Machines
                     typeof(Proposer),
                     new ProposerInitEvent(
                         name,
-                        acceptorNameToMachineId.Values.ToList()));
+                        acceptorNameToMachineId,
+                        networkMachine));
             }
 
             foreach (var name in acceptorNameToMachineId.Keys)
@@ -59,8 +62,8 @@ namespace DiscoveringPaxos.Machines
                     typeof(Acceptor),
                     new AcceptorInitEvent(
                         name,
-                        proposerNameToMachineId.Values.ToList(),
-                        learnerNameToMachineId.Values.ToList()));
+                        proposerNameToMachineId,
+                        learnerNameToMachineId));
             }
 
             foreach (var name in learnerNameToMachineId.Keys)
@@ -70,7 +73,7 @@ namespace DiscoveringPaxos.Machines
                     typeof(Learner),
                     new LearnerInitEvent(
                         name,
-                        acceptorNameToMachineId.Values.ToList()));
+                        acceptorNameToMachineId));
             }
 
             for (int i = 0; i < numProposers; i++)
@@ -111,7 +114,7 @@ namespace DiscoveringPaxos.Machines
 
         private static string GetProposerName(int index)
         {
-            return "P" + (index + 1);
+            return "p" + (index + 1);
         }
 
         private static string GetAcceptorName(int index)

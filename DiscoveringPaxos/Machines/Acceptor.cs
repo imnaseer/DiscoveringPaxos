@@ -13,8 +13,8 @@ namespace DiscoveringPaxos.Machines
     public class Acceptor : Machine
     {
         private string name;
-        private List<MachineId> proposers;
-        private List<MachineId> learners;
+        private Dictionary<string, MachineId> proposers;
+        private Dictionary<string, MachineId> learners;
 
         private Proposal lastAckedProposal;
 
@@ -62,16 +62,10 @@ namespace DiscoveringPaxos.Machines
                 return;
             }
 
-            //if (this.lastAcceptedProposal != null && 
-            //    !this.lastAcceptedProposal.Equals(proposal))
-            //{
-            //    Assert(this.acceptedValue == value);
-            //}
-
             this.lastAcceptedProposal = proposal;
             this.acceptedValue = value;
 
-            foreach (var learner in learners)
+            foreach (var learner in learners.Values)
             {
                 Send(learner, new ValueAcceptedEvent(this.Id, proposal, value));
             }

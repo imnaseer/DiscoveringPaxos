@@ -10,14 +10,17 @@ namespace DiscoveringPaxos.Events.Request
 {
     public class ProposerInitEvent : Event
     {
-        public ProposerInitEvent(string name, List<MachineId> acceptors)
+        public ProposerInitEvent(string name, Dictionary<string, MachineId> acceptors, MachineId networkMachine)
         {
             this.Name = name;
             this.Acceptors = acceptors;
+            this.NetworkMachine = networkMachine;
         }
 
         public string Name { get; private set; }
 
-        public List<MachineId> Acceptors { get; private set; }
+        public Dictionary<string, MachineId> Acceptors { get; private set; }
+
+        public MachineId NetworkMachine { get; private set; }
     }
 }

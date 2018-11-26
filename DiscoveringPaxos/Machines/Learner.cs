@@ -12,7 +12,7 @@ namespace DiscoveringPaxos.Machines
     public class Learner : Machine
     {
         private string name;
-        private List<MachineId> acceptors;
+        private Dictionary<string, MachineId> acceptors;
 
         private Dictionary<MachineId, Proposal> acceptorToProposalMap = new Dictionary<MachineId, Proposal>();
         private Dictionary<Proposal, string> proposalToValueMap = new Dictionary<Proposal, string>();

@@ -190,7 +190,7 @@
     <Compile Include="Machines\Acceptor.cs" />
     <Compile Include="Machines\Learner.cs" />
     <Compile Include="Machines\MainMachine.cs" />
-    <Compile Include="Machines\NetworkConnectionMachine.cs" />
+    <Compile Include="Machines\NetworkMachine.cs" />
     <Compile Include="Machines\Proposer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

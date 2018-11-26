@@ -10,7 +10,7 @@ namespace DiscoveringPaxos.Events.Request
 {
     public class AcceptorInitEvent : Event
     {
-        public AcceptorInitEvent(string name, List<MachineId> proposers, List<MachineId> learners)
+        public AcceptorInitEvent(string name, Dictionary<string, MachineId> proposers, Dictionary<string, MachineId> learners)
         {
             this.Name = name;
             this.Proposers = proposers;
@@ -19,8 +19,8 @@ namespace DiscoveringPaxos.Events.Request
 
         public string Name { get; private set; }
 
-        public List<MachineId> Proposers { get; private set; }
+        public Dictionary<string, MachineId> Proposers { get; private set; }
 
-        public List<MachineId> Learners { get; private set; }
+        public Dictionary<string, MachineId> Learners { get; private set; }
     }
 }

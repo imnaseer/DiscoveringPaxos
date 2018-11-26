@@ -8,10 +8,17 @@ using DiscoveringPaxos.Events.Request;
 
 namespace DiscoveringPaxos.Machines
 {
-    public class NetworkConnectionMachine : Machine
+    public class NetworkMachine : Machine
     {
         public void NetworkSendRequestHandler()
         {
+            var sendRequestEvent = (NetworkSendRequest)ReceivedEvent;
+
+            var from = sendRequestEvent.From;
+            var to = sendRequestEvent.To;
+            var eventObject = sendRequestEvent.Event;
+
+            Send(to, eventObject);
         }
 
         [Start]

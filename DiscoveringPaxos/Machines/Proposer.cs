@@ -11,7 +11,8 @@ namespace DiscoveringPaxos.Machines
     public class Proposer : Machine
     {
         private string name;
-        private List<MachineId> acceptors;
+        private Dictionary<string, MachineId> acceptors;
+        private MachineId networkMachine;
 
         private int proposalCounter = 0;
 
@@ -30,6 +31,7 @@ namespace DiscoveringPaxos.Machines
 
             this.name = initEvent.Name;
             this.acceptors = initEvent.Acceptors;
+            this.networkMachine = initEvent.NetworkMachine;
 
             Goto<Ready>();
         }
@@ -37,6 +39,11 @@ namespace DiscoveringPaxos.Machines
         public void ProposeValueRequestHandler()
         {
             var request = (ClientProposeValueRequest)ReceivedEvent;
+
+            this.value = request.Value;
+            this.proposalCounter++;
+            this.receivedProposalResponses = new HashSet<MachineId>();
+            this.currentProposal = new Proposal(this.name, proposalCounter);
 
             SendProposalRequests(request.Value);
 
@@ -64,7 +71,7 @@ namespace DiscoveringPaxos.Machines
 
             receivedProposalResponses.Add(response.From);
 
-            if (!finalValueChosen && 
+            if (!finalValueChosen &&
                 Utils.GreaterThan50PercentObservations(receivedProposalResponses.Count, acceptors.Count))
             {
                 Proposal chosenPreviouslyAcceptedProposal = null;
@@ -72,8 +79,12 @@ namespace DiscoveringPaxos.Machines
                 foreach (var acceptor in acceptorToPreviouslyAcceptedProposal.Keys)
                 {
                     var proposal = acceptorToPreviouslyAcceptedProposal[acceptor];
-                    if (chosenPreviouslyAcceptedProposal == null ||
-                        proposal.GreaterThan(chosenPreviouslyAcceptedProposal))
+                    if (chosenPreviouslyAcceptedProposal == null)
+                    {
+                        chosenPreviouslyAcceptedProposal = proposal;
+                        chosenValue = acceptorToPreviouslyAcceptedValue[acceptor];
+                    }
+                    else if (!proposal.GreaterThan(chosenPreviouslyAcceptedProposal))
                     {
                         chosenPreviouslyAcceptedProposal = proposal;
                         chosenValue = acceptorToPreviouslyAcceptedValue[acceptor];
@@ -90,25 +101,26 @@ namespace DiscoveringPaxos.Machines
 
                 foreach (var acceptor in receivedProposalResponses)
                 {
-                    Send(acceptor, new AcceptRequest(this.Id, this.currentProposal, this.value));
+                    SendNetworkRequest(acceptor, new AcceptRequest(this.Id, this.currentProposal, this.value));
                 }
             }
             else if (finalValueChosen)
             {
-                Send(fromAcceptor, new AcceptRequest(this.Id, this.currentProposal, this.value));
+                SendNetworkRequest(fromAcceptor, new AcceptRequest(this.Id, this.currentProposal, this.value));
             }
         }
 
         private void SendProposalRequests(string value)
         {
-            this.value = value;
-            this.proposalCounter++;
-            this.receivedProposalResponses = new HashSet<MachineId>();
-            this.currentProposal = new Proposal(this.name, proposalCounter);
-            foreach (var acceptor in acceptors)
+            foreach (var acceptor in acceptors.Values)
             {
-                Send(acceptor, new ProposalRequest(this.Id, currentProposal));
+                SendNetworkRequest(acceptor, new ProposalRequest(this.Id, this.currentProposal));
             }
+        }
+
+        private void SendNetworkRequest(MachineId to, Event eventObject)
+        {
+            Send(networkMachine, new NetworkSendRequest(this.Id, to, eventObject));
         }
 
         [Start]
