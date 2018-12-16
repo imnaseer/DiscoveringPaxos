@@ -16,7 +16,7 @@ namespace DiscoveringPaxos
         [Microsoft.PSharp.Test]
         public static void PaxosTest(PSharpRuntime runtime)
         {
-            runtime.RegisterMonitor(typeof(SafetyMonitor));
+            runtime.RegisterMonitor(typeof(SafteyAndLivenessMonitor));
             runtime.CreateMachine(typeof(MainMachine), new MainMachineInitEvent(runtime));
         }
     }

@@ -49,17 +49,17 @@ namespace DiscoveringPaxos.Machines
                 if (this.learnedValue == null)
                 {
                     this.learnedValue = majorityValue;
-                    Monitor<SafetyMonitor>(new ValueLearnedEvent());
+                    Monitor<SafteyAndLivenessMonitor>(new ValueLearnedEvent());
                 }
                 else
                 {
                     if (this.learnedValue == majorityValue)
                     {
-                        Monitor<SafetyMonitor>(new ValueLearnedEvent());
+                        Monitor<SafteyAndLivenessMonitor>(new ValueLearnedEvent());
                     }
                     else
                     {
-                        Monitor<SafetyMonitor>(new ConflictingValuesLearnedEvent());
+                        Monitor<SafteyAndLivenessMonitor>(new ConflictingValuesLearnedEvent());
                     }
                 }
             }

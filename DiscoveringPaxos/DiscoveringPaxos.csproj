@@ -195,7 +195,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proposal.cs" />
-    <Compile Include="Spec\SafetyMonitor.cs" />
+    <Compile Include="Spec\SafteyAndLivenessMonitor.cs" />
     <Compile Include="SystemConfig.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>

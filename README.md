@@ -12,7 +12,7 @@ P#'s automated tester explores the non-determinism encoded in the Paxos implemen
 The P# tester can be run using the following command
 
 ```
-PSharpTester.exe -test:DiscoveringPaxos.dll -i:1000 -max-steps:1000 -coverage:code
+PSharpTester.exe -test:DiscoveringPaxos.dll -i:10000 -max-steps:1000 -sch:pct:10
 ```
 
 The code coverage parameter is useful to ensure all interesting parts of the implementation have been exercised by the tester. The P# tester emits reproducable schedules which can be used to replay buggy scenario as many times as required. The replayer can be run using teh following command:
@@ -20,4 +20,3 @@ The code coverage parameter is useful to ensure all interesting parts of the imp
 ```
 PSharpReplayer.exe /test:DiscoveringPaxos.dll /replay:Output\DiscoveringPaxos.dll\PSharpTesterOutput\DiscoveringPaxos_0_0.schedule /break
 ```
-

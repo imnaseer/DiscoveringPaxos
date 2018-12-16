@@ -8,7 +8,7 @@ using DiscoveringPaxos.Events.Request;
 
 namespace DiscoveringPaxos.Spec
 {
-    public class SafetyMonitor : Monitor
+    public class SafteyAndLivenessMonitor : Monitor
     {
         [Start]
         [Hot]

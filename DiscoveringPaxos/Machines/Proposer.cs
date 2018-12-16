@@ -79,12 +79,8 @@ namespace DiscoveringPaxos.Machines
                 foreach (var acceptor in acceptorToPreviouslyAcceptedProposal.Keys)
                 {
                     var proposal = acceptorToPreviouslyAcceptedProposal[acceptor];
-                    if (chosenPreviouslyAcceptedProposal == null)
-                    {
-                        chosenPreviouslyAcceptedProposal = proposal;
-                        chosenValue = acceptorToPreviouslyAcceptedValue[acceptor];
-                    }
-                    else if (!proposal.GreaterThan(chosenPreviouslyAcceptedProposal))
+                    if (chosenPreviouslyAcceptedProposal == null ||
+                        proposal.GreaterThan(chosenPreviouslyAcceptedProposal))
                     {
                         chosenPreviouslyAcceptedProposal = proposal;
                         chosenValue = acceptorToPreviouslyAcceptedValue[acceptor];
