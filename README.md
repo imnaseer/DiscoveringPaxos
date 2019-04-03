@@ -33,3 +33,4 @@ The code coverage parameter is useful to ensure all interesting parts of the imp
 ```
 ..\..\..\PSharp\bin\net46\PSharpTester.exe\PSharpReplayer.exe /test:DiscoveringPaxos.dll /replay:Output\DiscoveringPaxos.dll\PSharpTesterOutput\DiscoveringPaxos_0_0.schedule /break
 ```
+

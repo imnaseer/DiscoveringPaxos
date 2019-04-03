@@ -22,5 +22,10 @@ namespace DiscoveringPaxos.Events.Request
         public Dictionary<string, MachineId> Proposers { get; private set; }
 
         public Dictionary<string, MachineId> Learners { get; private set; }
+
+        public override string GetEventRepresentation()
+        {
+            return "acceptor-init-event(" + this.Name + ")";
+        }
     }
 }

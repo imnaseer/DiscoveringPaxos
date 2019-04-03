@@ -15,5 +15,10 @@ namespace DiscoveringPaxos.Events.Request
         }
 
         public PSharpRuntime Runtime { get; private set; }
+
+        public override string GetEventRepresentation()
+        {
+            return "main-machine-init";
+        }
     }
 }

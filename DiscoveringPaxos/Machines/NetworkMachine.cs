@@ -8,23 +8,23 @@ using DiscoveringPaxos.Events.Request;
 
 namespace DiscoveringPaxos.Machines
 {
-    public class NetworkMachine : Machine
-    {
-        public void NetworkSendRequestHandler()
-        {
-            var sendRequestEvent = (NetworkSendRequest)ReceivedEvent;
+    //public class NetworkMachine : Machine
+    //{
+    //    public void NetworkSendRequestHandler()
+    //    {
+    //        var sendRequestEvent = (NetworkSendRequest)ReceivedEvent;
 
-            var from = sendRequestEvent.From;
-            var to = sendRequestEvent.To;
-            var eventObject = sendRequestEvent.Event;
+    //        var from = sendRequestEvent.From;
+    //        var to = sendRequestEvent.To;
+    //        var eventObject = sendRequestEvent.Event;
 
-            Send(to, eventObject);
-        }
+    //        Send(to, eventObject);
+    //    }
 
-        [Start]
-        [OnEventDoAction(typeof(NetworkSendRequest), nameof(NetworkSendRequestHandler))]
-        internal class Init : MachineState
-        {
-        }
-    }
+    //    [Start]
+    //    [OnEventDoAction(typeof(NetworkSendRequest), nameof(NetworkSendRequestHandler))]
+    //    internal class Init : MachineState
+    //    {
+    //    }
+    //}
 }

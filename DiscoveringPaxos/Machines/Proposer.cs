@@ -12,7 +12,7 @@ namespace DiscoveringPaxos.Machines
     {
         private string name;
         private Dictionary<string, MachineId> acceptors;
-        private MachineId networkMachine;
+        private Dictionary<MachineId, string> acceptorNames;
 
         private int proposalCounter = 0;
 
@@ -31,7 +31,12 @@ namespace DiscoveringPaxos.Machines
 
             this.name = initEvent.Name;
             this.acceptors = initEvent.Acceptors;
-            this.networkMachine = initEvent.NetworkMachine;
+
+            this.acceptorNames = new Dictionary<MachineId, string>();
+            foreach (string name in acceptors.Keys)
+            {
+                this.acceptorNames[acceptors[name]] = name;
+            }
 
             Goto<Ready>();
         }
@@ -80,7 +85,7 @@ namespace DiscoveringPaxos.Machines
                 {
                     var proposal = acceptorToPreviouslyAcceptedProposal[acceptor];
                     if (chosenPreviouslyAcceptedProposal == null ||
-                        proposal.GreaterThan(chosenPreviouslyAcceptedProposal))
+                        !proposal.GreaterThan(chosenPreviouslyAcceptedProposal))
                     {
                         chosenPreviouslyAcceptedProposal = proposal;
                         chosenValue = acceptorToPreviouslyAcceptedValue[acceptor];
@@ -106,6 +111,37 @@ namespace DiscoveringPaxos.Machines
             }
         }
 
+        protected override string GetStateInfo()
+        {
+            string currentProposalStr = currentProposal == null ?
+                "<None>" :
+                currentProposal.ToString();
+
+            List<string> responses = new List<string>();
+            if (receivedProposalResponses != null)
+            {
+                foreach (MachineId mid in receivedProposalResponses)
+                {
+                    string responseStr =
+                        this.acceptorNames[mid];
+
+                    if (acceptorToPreviouslyAcceptedValue.ContainsKey(mid))
+                    {
+                        responseStr += ": " +
+                            acceptorToPreviouslyAcceptedValue[mid] + "@" + acceptorToPreviouslyAcceptedValue[mid].ToString();
+                    }
+
+                    responses.Add(responseStr);
+                }
+            }
+
+            string valueStr = value == null ?
+                "<None>" :
+                value;
+
+            return valueStr + ", " + currentProposalStr + ", " + String.Join("; ", responses);
+        }
+
         private void SendProposalRequests(string value)
         {
             foreach (var acceptor in acceptors.Values)
@@ -116,7 +152,7 @@ namespace DiscoveringPaxos.Machines
 
         private void SendNetworkRequest(MachineId to, Event eventObject)
         {
-            Send(networkMachine, new NetworkSendRequest(this.Id, to, eventObject));
+            Send(to, eventObject);
         }
 
         [Start]

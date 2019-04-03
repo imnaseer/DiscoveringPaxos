@@ -10,17 +10,19 @@ namespace DiscoveringPaxos.Events.Request
 {
     public class ProposerInitEvent : Event
     {
-        public ProposerInitEvent(string name, Dictionary<string, MachineId> acceptors, MachineId networkMachine)
+        public ProposerInitEvent(string name, Dictionary<string, MachineId> acceptors)
         {
             this.Name = name;
             this.Acceptors = acceptors;
-            this.NetworkMachine = networkMachine;
         }
 
         public string Name { get; private set; }
 
         public Dictionary<string, MachineId> Acceptors { get; private set; }
 
-        public MachineId NetworkMachine { get; private set; }
+        public override string GetEventRepresentation()
+        {
+            return "propose-init-event(" + this.Name + ")";
+        }
     }
 }

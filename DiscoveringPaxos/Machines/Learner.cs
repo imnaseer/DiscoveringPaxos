@@ -13,6 +13,7 @@ namespace DiscoveringPaxos.Machines
     {
         private string name;
         private Dictionary<string, MachineId> acceptors;
+        private Dictionary<MachineId, string> acceptorNames;
 
         private Dictionary<MachineId, Proposal> acceptorToProposalMap = new Dictionary<MachineId, Proposal>();
         private Dictionary<Proposal, string> proposalToValueMap = new Dictionary<Proposal, string>();
@@ -25,6 +26,12 @@ namespace DiscoveringPaxos.Machines
 
             this.name = initEvent.Name;
             this.acceptors = initEvent.Acceptors;
+
+            this.acceptorNames = new Dictionary<MachineId, string>();
+            foreach (string name in acceptors.Keys)
+            {
+                this.acceptorNames[acceptors[name]] = name;
+            }
         }
 
         public void ValueAcceptedEventHandler()
@@ -63,6 +70,27 @@ namespace DiscoveringPaxos.Machines
                     }
                 }
             }
+        }
+
+        protected override string GetStateInfo()
+        {
+            List<string> messages = new List<string>();
+
+            foreach (MachineId mid in acceptorToProposalMap.Keys)
+            {
+                Proposal proposal = acceptorToProposalMap[mid];
+                string value = proposalToValueMap[proposal];
+
+                string message =
+                    this.acceptorNames[mid] + ": " +
+                    value + "@" + proposal.ToString();
+
+                messages.Add(message);
+            }
+
+            return
+                "Learned: " + (learnedValue == null ? "<None>" : learnedValue) + ", " +
+                "Evidence: " + String.Join("; ", messages);
         }
 
         [Start]

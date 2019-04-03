@@ -28,13 +28,18 @@ namespace DiscoveringPaxos
             return ProposerName.CompareTo(p2.ProposerName) > 0;
         }
 
+        public override string ToString()
+        {
+            return ProposerName + ":" + Id;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null)
             {
                 return false;
             }
-            
+
             if (!(obj is Proposal))
             {
                 return false;

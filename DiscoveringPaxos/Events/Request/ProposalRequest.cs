@@ -18,5 +18,10 @@ namespace DiscoveringPaxos.Events.Request
         public MachineId From { get; private set; }
 
         public Proposal Proposal { get; private set; }
+    
+        public override string GetEventRepresentation()
+        {
+            return "propose(" + this.Proposal.ToString() + ")";
+        }
     }
 }

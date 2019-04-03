@@ -21,5 +21,10 @@ namespace DiscoveringPaxos.Events.Request
         public string Value { get; private set; }
 
         public Proposal Proposal { get; private set; }
+
+        public override string GetEventRepresentation()
+        {
+            return "accept(" + this.Value + ", " + this.Proposal.ToString() + ")";
+        }
     }
 }

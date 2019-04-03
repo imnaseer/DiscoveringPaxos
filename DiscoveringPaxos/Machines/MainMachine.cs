@@ -24,8 +24,6 @@ namespace DiscoveringPaxos.Machines
             var initEvent = (MainMachineInitEvent)ReceivedEvent;
             var runtime = initEvent.Runtime;
 
-            var networkMachine = runtime.CreateMachine(typeof(NetworkMachine));
-
             proposerNameToMachineId = CreateMachineIds(
                 runtime,
                 typeof(Proposer),
@@ -51,8 +49,7 @@ namespace DiscoveringPaxos.Machines
                     typeof(Proposer),
                     new ProposerInitEvent(
                         name,
-                        acceptorNameToMachineId,
-                        networkMachine));
+                        acceptorNameToMachineId));
             }
 
             foreach (var name in acceptorNameToMachineId.Keys)
@@ -92,6 +89,11 @@ namespace DiscoveringPaxos.Machines
                     Send(acceptorNameToMachineId[GetAcceptorName(i)], new HaltAcceptorEvent());
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return "main";
         }
 
         private static Dictionary<string, MachineId> CreateMachineIds(

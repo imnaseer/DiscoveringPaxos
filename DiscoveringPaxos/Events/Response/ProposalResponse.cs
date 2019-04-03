@@ -32,5 +32,18 @@ namespace DiscoveringPaxos.Events.Request
         public Proposal PreviouslyAcceptedProposal { get; private set; }
 
         public string PreviouslyAcceptedValue { get; private set; }
+
+        public override string GetEventRepresentation()
+        {
+            string name = this.Acknowledged ? "ack" : "n-ack";
+            string previouslyAcceptedProposalStr = this.PreviouslyAcceptedProposal == null ?
+                "none" :
+                this.PreviouslyAcceptedProposal.ToString();
+            string previouslyAcceptedValueStr = this.PreviouslyAcceptedValue == null ?
+                "none" :
+                this.PreviouslyAcceptedValue;
+
+            return name + "(" + this.Proposal.ToString() + ", " + previouslyAcceptedProposalStr + ", " + previouslyAcceptedValueStr + ")";
+        }
     }
 }

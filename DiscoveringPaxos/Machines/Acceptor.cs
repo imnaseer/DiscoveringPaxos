@@ -42,8 +42,8 @@ namespace DiscoveringPaxos.Machines
             {
                 lastAckedProposal = proposal;
                 Send(proposer, new ProposalResponse(
-                    this.Id, 
-                    proposal, 
+                    this.Id,
+                    proposal,
                     true /* acknowledged */,
                     this.lastAcceptedProposal,
                     this.acceptedValue));
@@ -74,6 +74,25 @@ namespace DiscoveringPaxos.Machines
         public void HaltAcceptorEventHandler()
         {
             Raise(new Halt());
+        }
+
+        protected override string GetStateInfo()
+        {
+            string lastAckedProposalStr = lastAckedProposal == null ?
+                "<None>" :
+                lastAckedProposal.ToString();
+
+            string lastAcceptedProposalStr = lastAcceptedProposal == null ?
+                "<None>" :
+                lastAcceptedProposal.ToString();
+
+            string acceptedValueStr = acceptedValue == null ?
+                "<None>" :
+                acceptedValue;
+
+            return
+                "Acked: " + lastAckedProposalStr + ", " +
+                "Accepted: " + acceptedValueStr + "@" + lastAcceptedProposalStr;
         }
 
         [Start]
