@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,21 +8,21 @@ using DiscoveringPaxos.Machines;
 
 namespace DiscoveringPaxos.Events.Request
 {
-    public class ProposerInitEvent : Event
+    public class NodeInitEvent : Event
     {
-        public ProposerInitEvent(string name, Dictionary<string, MachineId> acceptors)
+        public NodeInitEvent(string name, Dictionary<string, MachineId> nodes)
         {
             this.Name = name;
-            this.Acceptors = acceptors;
+            this.Nodes = nodes;
         }
 
         public string Name { get; private set; }
 
-        public Dictionary<string, MachineId> Acceptors { get; private set; }
+        public Dictionary<string, MachineId> Nodes { get; private set; }
 
         public override string GetEventRepresentation()
         {
-            return "propose-init-event(" + this.Name + ")";
+            return "node-init-event(" + this.Name + ")";
         }
     }
 }

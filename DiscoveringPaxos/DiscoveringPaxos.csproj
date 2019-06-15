@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -51,24 +51,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\Request\AcceptorInitEvent.cs" />
     <Compile Include="Events\Request\AcceptRequest.cs" />
     <Compile Include="Events\Request\ConflictingValuesLearnedEvent.cs" />
     <Compile Include="Events\Request\HaltAcceptorEvent.cs" />
-    <Compile Include="Events\Request\LearnerInitEvent.cs" />
     <Compile Include="Events\Request\MainMachineInitEvent.cs" />
-    <Compile Include="Events\Request\NetworkSendRequest.cs" />
-    <Compile Include="Events\Request\ProposerInitEvent.cs" />
+    <Compile Include="Events\Request\NodeInitEvent.cs" />
     <Compile Include="Events\Request\ClientProposeValueRequest.cs" />
     <Compile Include="Events\Request\ProposalRequest.cs" />
     <Compile Include="Events\Request\ValueAcceptedEvent.cs" />
     <Compile Include="Events\Request\ValueLearnedEvent.cs" />
     <Compile Include="Events\Response\ProposalResponse.cs" />
-    <Compile Include="Machines\Acceptor.cs" />
-    <Compile Include="Machines\Learner.cs" />
     <Compile Include="Machines\MainMachine.cs" />
-    <Compile Include="Machines\NetworkMachine.cs" />
-    <Compile Include="Machines\Proposer.cs" />
+    <Compile Include="Machines\Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proposal.cs" />

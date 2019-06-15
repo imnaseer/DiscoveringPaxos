@@ -10,83 +10,46 @@ namespace DiscoveringPaxos.Machines
 {
     public class MainMachine : Machine
     {
-        private static int numProposers = 3;
-        private static int numAcceptors = 5;
-        private static int numLearners = 1;
-        private static int maxAcceptorFailureCount = 2;
+        private static int numNodes = 3;
+        private static int maxAcceptorFailureCount = 0;
 
-        private static Dictionary<string, MachineId> proposerNameToMachineId;
-        private static Dictionary<string, MachineId> acceptorNameToMachineId;
-        private static Dictionary<string, MachineId> learnerNameToMachineId;
+        private static Dictionary<string, MachineId> nodeNameToMachineId;
 
         public void InitOnEntry()
         {
             var initEvent = (MainMachineInitEvent)ReceivedEvent;
             var runtime = initEvent.Runtime;
 
-            proposerNameToMachineId = CreateMachineIds(
+            nodeNameToMachineId = CreateMachineIds(
                 runtime,
-                typeof(Proposer),
-                GetProposerName,
-                numProposers);
+                typeof(Node),
+                GetNodeName,
+                numNodes);
 
-            acceptorNameToMachineId = CreateMachineIds(
-                runtime,
-                typeof(Acceptor),
-                GetAcceptorName,
-                numAcceptors);
-
-            learnerNameToMachineId = CreateMachineIds(
-                runtime,
-                typeof(Learner),
-                GetLearnerName,
-                numLearners);
-
-            foreach (var name in proposerNameToMachineId.Keys)
+            foreach (var name in nodeNameToMachineId.Keys)
             {
                 runtime.CreateMachine(
-                    proposerNameToMachineId[name],
-                    typeof(Proposer),
-                    new ProposerInitEvent(
+                    nodeNameToMachineId[name],
+                    typeof(Node),
+                    new NodeInitEvent(
                         name,
-                        acceptorNameToMachineId));
+                        nodeNameToMachineId));
             }
 
-            foreach (var name in acceptorNameToMachineId.Keys)
+            for (int i = 0; i < numNodes; i++)
             {
-                runtime.CreateMachine(
-                    acceptorNameToMachineId[name],
-                    typeof(Acceptor),
-                    new AcceptorInitEvent(
-                        name,
-                        proposerNameToMachineId,
-                        learnerNameToMachineId));
-            }
-
-            foreach (var name in learnerNameToMachineId.Keys)
-            {
-                runtime.CreateMachine(
-                    learnerNameToMachineId[name],
-                    typeof(Learner),
-                    new LearnerInitEvent(
-                        name,
-                        acceptorNameToMachineId));
-            }
-
-            for (int i = 0; i < numProposers; i++)
-            {
-                var proposerName = GetProposerName(i);
+                var nodeName = GetNodeName(i);
                 var value = GetValue(i);
-                runtime.SendEvent(proposerNameToMachineId[proposerName], new ClientProposeValueRequest(null, value));
+                runtime.SendEvent(nodeNameToMachineId[nodeName], new ClientProposeValueRequest(null, value));
             }
 
             int failureCount = 0;
-            for (int i = 0; i < numAcceptors; i++)
+            for (int i = 0; i < numNodes; i++)
             {
                 if (Random() && failureCount < maxAcceptorFailureCount)
                 {
                     failureCount++;
-                    Send(acceptorNameToMachineId[GetAcceptorName(i)], new HaltAcceptorEvent());
+                    Send(nodeNameToMachineId[GetNodeName(i)], new HaltAcceptorEvent());
                 }
             }
         }
@@ -114,19 +77,9 @@ namespace DiscoveringPaxos.Machines
             return result;
         }
 
-        private static string GetProposerName(int index)
+        private static string GetNodeName(int index)
         {
-            return "p" + (index + 1);
-        }
-
-        private static string GetAcceptorName(int index)
-        {
-            return "a" + (index + 1);
-        }
-
-        private static string GetLearnerName(int index)
-        {
-            return "l" + (index + 1);
+            return "n" + (index + 1);
         }
 
         private static string GetValue(int index)
