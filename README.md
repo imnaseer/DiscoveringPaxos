@@ -3,7 +3,7 @@
 
 This repo contains source code for a Paxos implementation as described in [Paxos Made Simple](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf) written in P#.
 
-The source code is gradually derived from a simple attempt all the way to the complete protocol in the style of [Paxos from the ground up](http://imnaseer.net/paxos-from-the-ground-up.html). The incremental attempts can be seen in the commit history of this repo.
+The source code is gradually derived from a simple attempt all the way to the complete protocol in the style of [Paxos from the ground up](https://imnaseer.github.io/paxos-from-the-ground-up/paxos-from-the-ground-up.html). The incremental attempts can be seen in the commit history of this repo.
 
 P#'s automated tester explores the non-determinism encoded in the Paxos implementation and points out the safety and liveness bugs in each version of the implementation.
 
